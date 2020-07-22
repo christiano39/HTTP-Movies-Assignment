@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import axios from 'axios';
 
-const EditForm = () => {
+const EditForm = props => {
     const [formData, setFormData] = useState(null);
     const [error, setError] = useState('');
     const params = useParams();
@@ -26,6 +26,14 @@ const EditForm = () => {
         axios
             .put(`http://localhost:5000/api/movies/${params.id}`, editedFilm)
             .then(res => {
+                console.log(res);
+                props.setMovies(props.movies.map(movie => {
+                    if (movie.id === res.data.id) {
+                        return {...res.data};
+                    }else {
+                        return movie;
+                    }
+                }));
                 setFormData(null);
                 setError('');
                 history.push(`/`);

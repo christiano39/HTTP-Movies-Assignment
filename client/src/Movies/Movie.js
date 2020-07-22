@@ -1,19 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import axios from "axios";
 import { useParams, useHistory } from "react-router-dom";
 import MovieCard from "./MovieCard";
 
-function Movie({ addToSavedList }) {
-  const [movie, setMovie] = useState(null);
+function Movie({ addToSavedList, movies, setMovies }) {
   const params = useParams();
   const history = useHistory();
-
-  const fetchMovie = (id) => {
-    axios
-      .get(`http://localhost:5000/api/movies/${id}`)
-      .then((res) => setMovie(res.data))
-      .catch((err) => console.log(err.response));
-  };
+  const movie = movies.find(mov => {
+    return mov.id === parseInt(params.id);
+  })
 
   const saveMovie = () => {
     addToSavedList(movie);
@@ -27,16 +22,14 @@ function Movie({ addToSavedList }) {
     axios
       .delete(`http://localhost:5000/api/movies/${params.id}`)
       .then(res => {
+        console.log(res); //res.data => id
+        setMovies(movies.filter(mov => mov.id !== res.data));
         history.push('/');
       })
       .catch(err => {
         console.log(err);
       })
   }
-
-  useEffect(() => {
-    fetchMovie(params.id);
-  }, [params.id]);
 
   if (!movie) {
     return <div>Loading movie information...</div>;

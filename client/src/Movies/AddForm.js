@@ -9,7 +9,7 @@ const initialFormValues = {
     stars: ''
 }
 
-const AddForm = () => {
+const AddForm = props => {
     const [formValues, setFormValues] = useState(initialFormValues);
     const [error, setError] = useState('');
     const history = useHistory();
@@ -33,6 +33,7 @@ const AddForm = () => {
         axios
             .post('http://localhost:5000/api/movies/', movie)
             .then(res => {
+                props.setMovies(res.data);
                 setFormValues(initialFormValues);
                 history.push('/');
             })
