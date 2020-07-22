@@ -4,6 +4,7 @@ import axios from 'axios';
 
 const EditForm = () => {
     const [formData, setFormData] = useState(null);
+    const [error, setError] = useState('');
     const params = useParams();
     const history = useHistory();
 
@@ -26,10 +27,11 @@ const EditForm = () => {
             .put(`http://localhost:5000/api/movies/${params.id}`, editedFilm)
             .then(res => {
                 setFormData(null);
+                setError('');
                 history.push(`/`);
             })
             .catch(err => {
-                console.log(err);
+                setError(err.response.data);
             });
     }
     
@@ -37,16 +39,15 @@ const EditForm = () => {
         axios
             .get(`http://localhost:5000/api/movies/${params.id}`)
             .then(res => {
-                console.log(res);
                 setFormData({
                     ...res.data,
                     stars: res.data.stars.join(",")
                 })
             })
             .catch(err => {
-                console.log(err.response);
+                console.log(err);
             })
-    }, [])
+    }, [params.id])
 
     return (
         <div className='form-container'>
@@ -86,6 +87,7 @@ const EditForm = () => {
                 /><br/><br/>
                 <button>Submit changes</button>
             </form>}
+            {error && <p className='error'>{error}</p>}
         </div>
     )
 };
